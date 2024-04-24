@@ -7,13 +7,15 @@ public interface UserRepository {
 
     public ResponseEntity<Object> createUser(UserModel user);
 
-    public UserModel getUser(int user_id);
+    public ResponseEntity<Object> getUser(int user_id);
 
-    public UserModel deleteUser(int user_id);
+    public ResponseEntity<Object> deleteUser(int user_id);
 
-    public UserModel updateUser(UserModel user);
+    public ResponseEntity<Object> updateUser(UserModel user);
 
-    public UserModel getUserByEmail(String email);
+    public ResponseEntity<Object> getUserByEmail(String email);
 
     public ResponseEntity<Object> loginUser(String email, String password);
+
+    public ResponseEntity<Object> getUserByName(String name);
 }

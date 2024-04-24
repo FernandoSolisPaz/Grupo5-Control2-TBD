@@ -7,4 +7,6 @@ public interface JwtMiddlewareRepository {
     public String generateToken(UserModel userModel);
 
     public Boolean validateToken(String token);
+
+    public UserModel decodeJWT(String token);
 }
