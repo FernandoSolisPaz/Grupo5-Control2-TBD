@@ -121,4 +121,24 @@ public class TaskService implements TaskRepository {
             );
         }
     }
+
+    @Override
+    public ResponseEntity<List<Object>> getTasksByState(String state, String token) {
+        if (!jwtMiddlewareService.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    List.of("No autorizado")
+            );
+        }
+        try (Connection connection = sql2o.open()) {
+            List<TaskModel> tasks = connection.createQuery("SELECT * FROM \"task\" WHERE state = :state")
+                    .addParameter("state", state)
+                    .executeAndFetch(TaskModel.class);
+            List<Object> result = (List) tasks;
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    List.of(e.getMessage())
+            );
+        }
+    }
 }

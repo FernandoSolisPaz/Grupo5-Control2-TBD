@@ -42,4 +42,9 @@ public class TaskController {
     public ResponseEntity<List<Object>> getAllTasks(@RequestParam String token) {
         return taskService.getAllTasks(token);
     }
+
+    @GetMapping("/tasks/{state}")
+    public ResponseEntity<List<Object>> getTasksByState(@PathVariable String state, @RequestParam String token) {
+        return taskService.getTasksByState(state, token);
+    }
 }

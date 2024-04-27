@@ -17,4 +17,6 @@ public interface TaskRepository {
     public ResponseEntity<Object> deleteTask(int task_id, String token);
 
     public ResponseEntity<List<Object>> getAllTasks(String token);
+
+    public ResponseEntity<List<Object>> getTasksByState(String state, String token);
 }
