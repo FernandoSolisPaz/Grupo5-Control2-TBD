@@ -1,6 +1,6 @@
 package com.tbd.fifth.group.taskmanager.models;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 public class TaskModel {
     // Atributos
@@ -8,11 +8,15 @@ public class TaskModel {
     private int user_id;
     private String title;
     private String description;
-    private LocalDate date_of_expire;
+    private String date_of_expire;
     private String state;
 
+    // Constructor por defecto
+    public TaskModel() {
+    }
+
     //
-    public TaskModel(int task_id, int user_id, String title, String description, LocalDate date_of_expire, String state) {
+    public TaskModel(int task_id, int user_id, String title, String description, String date_of_expire, String state) {
         this.task_id = task_id;
         this.user_id = user_id;
         this.title = title;
@@ -38,7 +42,7 @@ public class TaskModel {
         return this.description;
     }
 
-    public LocalDate getDate_of_expire() {
+    public String getDate_of_expire() {
         return this.date_of_expire;
     }
 
@@ -63,7 +67,7 @@ public class TaskModel {
         this.description = description;
     }
 
-    public void setDate_of_expire(LocalDate date_of_expire) {
+    public void setDate_of_expire(String date_of_expire) {
         this.date_of_expire = date_of_expire;
     }
 

@@ -34,6 +34,7 @@ public class TaskService implements TaskRepository {
     @Override
     public ResponseEntity<Object> createTask(TaskModel task, String token) {
         if (jwtMiddlewareService.validateToken(token)) {
+            System.out.println("Token valido");
             if (!verificationsService.validateInput(task.getTitle()) || !verificationsService.validateInput(task.getDescription())) {
                 return ResponseEntity.badRequest().body("Error al crear la tarea, caracteres no permitidos en el título o descripción");
             }
@@ -45,6 +46,7 @@ public class TaskService implements TaskRepository {
                         .addParameter("date_of_expire", task.getDate_of_expire())
                         .addParameter("state", task.getState())
                         .executeUpdate();
+                return ResponseEntity.ok(task);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 return ResponseEntity.badRequest().body("Error al crear la tarea");
@@ -56,6 +58,7 @@ public class TaskService implements TaskRepository {
     @Override
     public ResponseEntity<Object> getTask(int task_id, String token) {
         if (jwtMiddlewareService.validateToken(token)) {
+            System.out.println("Token valido");
             try (Connection connection = sql2o.open()) {
                 TaskModel task = connection.createQuery("SELECT * FROM \"task\" WHERE task_id = :task_id")
                         .addParameter("task_id", task_id)
@@ -66,12 +69,13 @@ public class TaskService implements TaskRepository {
                     return ResponseEntity.notFound().build();
                 }
             } catch (Exception e) {
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-
+                e.printStackTrace(); // Agregado para imprimir la pila de errores en la consola.
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage()); // Asegúrate de retornar la respuesta aquí.
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
     }
+
 
     @Override
     public ResponseEntity<Object> updateTask(int task_id, TaskModel task, String token) {
