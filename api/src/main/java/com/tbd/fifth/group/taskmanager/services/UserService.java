@@ -22,6 +22,9 @@ public class UserService implements UserRepository {
     @Autowired
     private JwtMiddlewareService jwtMiddlewareService;
 
+    @Autowired
+    private VerificationsService verificationsService;
+
     @Override
     public ResponseEntity<Object> createUser(UserModel user){
         try(Connection connection = sql2o.open()){

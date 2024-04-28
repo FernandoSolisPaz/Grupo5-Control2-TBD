@@ -28,10 +28,16 @@ public class TaskService implements TaskRepository {
     @Autowired
     private JwtMiddlewareService jwtMiddlewareService;
 
+    @Autowired
+    private VerificationsService verificationsService;
+
     @Override
     public ResponseEntity<Object> createTask(TaskModel task, String token) {
-        if(jwtMiddlewareService.validateToken(token)){
-            try(Connection connection = sql2o.open()){
+        if (jwtMiddlewareService.validateToken(token)) {
+            if (!verificationsService.validateInput(task.getTitle()) || !verificationsService.validateInput(task.getDescription())) {
+                return ResponseEntity.badRequest().body("Error al crear la tarea, caracteres no permitidos en el título o descripción");
+            }
+            try (Connection connection = sql2o.open()) {
                 connection.createQuery("INSERT INTO \"task\" (user_id, title, description, date_of_expire, state) VALUES (:user_id, :title, :description, :date_of_expire, :state)")
                         .addParameter("user_id", task.getUser_id())
                         .addParameter("title", task.getTitle())
@@ -39,7 +45,7 @@ public class TaskService implements TaskRepository {
                         .addParameter("date_of_expire", task.getDate_of_expire())
                         .addParameter("state", task.getState())
                         .executeUpdate();
-            }catch(Exception e){
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
                 return ResponseEntity.badRequest().body("Error al crear la tarea");
             }
