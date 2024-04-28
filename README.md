@@ -1,4 +1,4 @@
-# Control 1 - TBD
+# Control 2 - TBD
 ## Este control fue desarrollado por el grupo n°5.
 ### Integrantes de grupo 5:
 * Jaime Riquelme
