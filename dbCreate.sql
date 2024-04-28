@@ -13,7 +13,7 @@ CREATE TABLE Task (
 	user_id INT NOT NULL,
 	title CHAR(50) NOT NULL,
 	description CHAR(200),
-	date_of_expire DATE NOT NULL,
+	date_of_expire CHAR(10) NOT NULL,
 	state CHAR(10) NOT NULL,
 	PRIMARY KEY (Task_id)
 );
