@@ -28,6 +28,10 @@ public class UserService implements UserRepository {
     @Override
     public ResponseEntity<Object> createUser(UserModel user){
         try(Connection connection = sql2o.open()){
+            if (!verificationsService.validateInput(user.getName()) || !verificationsService.validateInput(user.getEmail()) ||
+                !verificationsService.validateInput(user.getPassword())) {
+                return ResponseEntity.badRequest().body("Error al crear el usuario, caracteres no permitidos en el nombre, email o contraseña");
+            }
             //verificar si el urusiop ya existe dado mail y nombre
             Integer count = connection.createQuery("SELECT COUNT(*) FROM \"userm\" WHERE email = :email AND name = :name")
                     .addParameter("email", user.getEmail())
@@ -87,6 +91,10 @@ public class UserService implements UserRepository {
 
     @Override
     public ResponseEntity<Object> updateUser(UserModel user) {
+        if (!verificationsService.validateInput(user.getName()) || !verificationsService.validateInput(user.getEmail()) ||
+                !verificationsService.validateInput(user.getPassword())) {
+            return ResponseEntity.badRequest().body("Error al actualizar el usuario, caracteres no permitidos en el nombre, email o contraseña");
+        }
         try (Connection connection = sql2o.open()) {
             connection.createQuery("UPDATE \"userm\" SET name = :name, email = :email, password = :password WHERE user_id = :user_id")
                     .addParameter("name", user.getName())
@@ -102,6 +110,9 @@ public class UserService implements UserRepository {
 
     @Override
     public ResponseEntity<Object> getUserByEmail(String email) {
+        if (!verificationsService.validateInput(email)) {
+            return ResponseEntity.badRequest().body("Error al crear el usuario, caracteres no permitidos en el email.");
+        }
         try(Connection connection = sql2o.open()){
             UserModel user = connection.createQuery("SELECT * FROM \"userm\" WHERE email = :email")
                     .addParameter("email", email)
@@ -116,6 +127,9 @@ public class UserService implements UserRepository {
 
     @Override
     public ResponseEntity<Object> loginUser(String name, String password) {
+        if (!verificationsService.validateInput(name) || !verificationsService.validateInput(password)) {
+            return ResponseEntity.badRequest().body("Error al iniciar sesion , caracteres no permitidos en el nombre o contraseña");
+        }
         try {
             UserModel user = (UserModel) getUserByName(name).getBody();
             if (user == null) {
@@ -134,6 +148,9 @@ public class UserService implements UserRepository {
     }
     @Override
     public ResponseEntity<Object> getUserByName(String name) {
+        if (!verificationsService.validateInput(name)) {
+            return ResponseEntity.badRequest().body("Error al obtener usuarios, el nombre contiene caracteres no permitidos");
+        }
         try(Connection connection = sql2o.open()){
             UserModel user = connection.createQuery("SELECT * FROM \"userm\" WHERE name = :name")
                     .addParameter("name", name)

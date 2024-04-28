@@ -35,8 +35,8 @@ public class TaskService implements TaskRepository {
     public ResponseEntity<Object> createTask(TaskModel task, String token) {
         if (jwtMiddlewareService.validateToken(token)) {
             System.out.println("Token valido");
-            if (!verificationsService.validateInput(task.getTitle()) || !verificationsService.validateInput(task.getDescription())) {
-                return ResponseEntity.badRequest().body("Error al crear la tarea, caracteres no permitidos en el título o descripción");
+            if (!verificationsService.validateInput(task.getTitle()) || !verificationsService.validateInput(task.getDescription()) || !verificationsService.validateInput(task.getState())) {
+                return ResponseEntity.badRequest().body("Error al crear la tarea, caracteres no permitidos en el título, descripción o estado.");
             }
             try (Connection connection = sql2o.open()) {
                 connection.createQuery("INSERT INTO \"task\" (user_id, title, description, date_of_expire, state) VALUES (:user_id, :title, :description, :date_of_expire, :state)")
@@ -79,6 +79,9 @@ public class TaskService implements TaskRepository {
 
     @Override
     public ResponseEntity<Object> updateTask(int task_id, TaskModel task, String token) {
+        if (!verificationsService.validateInput(task.getTitle()) || !verificationsService.validateInput(task.getDescription()) || !verificationsService.validateInput(task.getState())) {
+            return ResponseEntity.badRequest().body("Error al crear la tarea, caracteres no permitidos en el título, descripción o estado.");
+        }
         if(jwtMiddlewareService.validateToken(token)){
             try(Connection connection = sql2o.open()){
                 connection.createQuery("UPDATE \"task\" SET user_id = :user_id, title = :title, description = :description, date_of_expire = :date_of_expire, state = :state WHERE task_id = :task_id")
@@ -137,6 +140,11 @@ public class TaskService implements TaskRepository {
         if (!jwtMiddlewareService.validateToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     List.of("No autorizado")
+            );
+        }
+        if (!verificationsService.validateInput(state)) {
+            return ResponseEntity.badRequest().body(
+                    List.of("Error al obtener las tareas, caracteres no permitidos en el estado")
             );
         }
         try (Connection connection = sql2o.open()) {

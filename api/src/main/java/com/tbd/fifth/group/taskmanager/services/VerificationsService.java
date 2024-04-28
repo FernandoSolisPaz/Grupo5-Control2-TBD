@@ -9,6 +9,7 @@ public class VerificationsService implements VerificationsRepository {
     public Boolean validateInput(String input) {
         return !input.contains(";") && !input.contains("--") &&
                 !input.contains("`") && !input.contains("'") &&
-                !input.contains("\"") && !input.contains("\\");
+                !input.contains("\"") && !input.contains("\\") &&
+                !input.contains("/");
     }
 }
