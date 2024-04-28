@@ -159,4 +159,48 @@ public class TaskService implements TaskRepository {
             );
         }
     }
+
+
+    @Override
+    public ResponseEntity<List<Object>> getTasksByWord(String word, String token) {
+        if (!jwtMiddlewareService.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    List.of("No autorizado")
+            );
+        }
+        try (Connection connection = sql2o.open()) {
+            List<TaskModel> tasks = connection.createQuery("SELECT * FROM \"task\" WHERE LOWER(title) LIKE LOWER(:word) OR LOWER(description) LIKE LOWER(:word)")
+                    .addParameter("word", "%" + word + "%")
+                    .executeAndFetch(TaskModel.class);
+            List<Object> result = (List) tasks;
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    List.of(e.getMessage())
+            );
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<List<Object>> getTasksByDateExpire(String token) {
+        if (!jwtMiddlewareService.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    List.of("No autorizado")
+            );
+        }
+        try (Connection connection = sql2o.open()) {
+            List<TaskModel> tasks = connection.createQuery("SELECT * FROM \"task\" WHERE DATE(date_of_expire) BETWEEN DATE(CURRENT_DATE) AND DATE(CURRENT_DATE + INTERVAL '2 day')")
+                    .executeAndFetch(TaskModel.class);
+            List<Object> result = (List) tasks;
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    List.of(e.getMessage())
+            );
+        }
+    }
+
+
+
 }

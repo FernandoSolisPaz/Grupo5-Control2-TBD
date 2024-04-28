@@ -47,4 +47,15 @@ public class TaskController {
     public ResponseEntity<List<Object>> getTasksByState(@PathVariable String state, @RequestParam String token) {
         return taskService.getTasksByState(state, token);
     }
+
+    @GetMapping("/tasks/word/{word}")
+    public ResponseEntity<List<Object>> getTasksByWord(@PathVariable String word, @RequestParam String token) {
+        return taskService.getTasksByWord(word, token);
+    }
+
+    @GetMapping("/tasks/date")
+    public ResponseEntity<List<Object>> getTasksByDateExpire(@RequestParam String token) {
+        return taskService.getTasksByDateExpire(token);
+    }
+
 }
