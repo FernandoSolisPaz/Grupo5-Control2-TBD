@@ -15,7 +15,15 @@ public class TaskModel {
     public TaskModel() {
     }
 
-    //
+    // TaskMode (Constructor)
+    // Inputs:
+    // task_id: number referencing task id
+    // user_id: number referencing user id
+    // title: Title of the task
+    // description: Description of the task
+    // date_of_expire: Time limit to do the task
+    // state: Referencing the completion of the task (Pending or Completed)
+    //Output: task entity
     public TaskModel(int task_id, int user_id, String title, String description, String date_of_expire, String state) {
         this.task_id = task_id;
         this.user_id = user_id;

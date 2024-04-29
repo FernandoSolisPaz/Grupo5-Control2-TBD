@@ -9,7 +9,13 @@ public class UserModel {
 
     public UserModel() {}
 
-    //
+    // UserModel (Constructor)
+    //Input:
+    // user_id: Identification of the user
+    // name: name of the user
+    // email: email account of the user
+    // password: code for entry to the page of the user
+    // OutPut: User entity
     public UserModel(int user_id, String name, String email, String password) {
         this.user_id = user_id;
         this.name = name;
