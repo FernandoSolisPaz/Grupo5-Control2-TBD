@@ -22,6 +22,7 @@ dependencies {
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.8'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.2'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.2'
+	testImplementation 'junit:junit:4.+'
 }
 
 tasks.named('test') {
