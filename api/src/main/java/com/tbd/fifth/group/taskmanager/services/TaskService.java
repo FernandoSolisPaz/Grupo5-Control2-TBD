@@ -201,6 +201,25 @@ public class TaskService implements TaskRepository {
         }
     }
 
+    @Override
+    public ResponseEntity<List<Object>> getTaskByUserId(int user_id, String token) {
+        if (!jwtMiddlewareService.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    List.of("No autorizado")
+            );
+        }
+        try (Connection connection = sql2o.open()) {
+            List<TaskModel> tasks = connection.createQuery("SELECT * FROM \"task\" WHERE user_id = :user_id")
+                    .addParameter("user_id", user_id)
+                    .executeAndFetch(TaskModel.class);
+            List<Object> result = (List) tasks;
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    List.of(e.getMessage())
+            );
+        }
+    }
 
 
 }

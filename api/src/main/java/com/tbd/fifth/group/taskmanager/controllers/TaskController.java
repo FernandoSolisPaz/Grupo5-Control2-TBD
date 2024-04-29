@@ -58,4 +58,9 @@ public class TaskController {
         return taskService.getTasksByDateExpire(token);
     }
 
+    @GetMapping("/tasks/user/{user_id}")
+    public ResponseEntity<List<Object>> getTasksByUserId(@PathVariable int user_id, @RequestParam String token) {
+        return taskService.getTaskByUserId(user_id, token);
+    }
+
 }

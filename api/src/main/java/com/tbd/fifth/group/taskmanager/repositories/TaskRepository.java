@@ -71,4 +71,6 @@ public interface TaskRepository {
     //output:
     // ResponseEntity: With List of object from database
     public ResponseEntity<List<Object>> getTasksByDateExpire(String token);
+
+    public ResponseEntity<List<Object>> getTaskByUserId(int user_id, String token);
 }
