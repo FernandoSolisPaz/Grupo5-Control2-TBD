@@ -2,6 +2,7 @@
 
 import { format, isWithinInterval, addDays  } from 'date-fns'
 
+// Theming
 const colorMode = useColorMode();
 
 const isDark = computed({
@@ -13,6 +14,7 @@ const isDark = computed({
   }
 });
 
+// Dialog
 const isOpen = ref(false);
 
 const date = ref(new Date());
@@ -23,44 +25,30 @@ const tokenCookie = useCookie('token');
 if (!tokenCookie.value) {
     router.push('/login');
 }
-//const tasks = ref([]);
-const tasks = ref([
-    {
-        task_id: 1,
-        title: 'Entregar Control',
-        description: 'Descripción de la tarea 1',
-        state: 'Pending',
-        date_of_expire: '2024-10-10',
-        isOpen: false,
-        dateObj: new Date('2024-04-30T00:00:00')
-    },
-    {
-        task_id: 2,
-        title: 'Conectar backend',
-        description: 'Descripción de la tarea 2',
-        state: 'Pending',
-        date_of_expire: '2024-10-11',
-        isOpen: false,
-        dateObj: new Date('2024-04-30T00:00:00')
-    }
-]);
+
+const tasks = ref([]);
+
+async function getTasks() {
+    const response = await useApi().getTasksById(user.getUserId(), tokenCookie.value);
+    tasks.value = response.map(task => ({ ...task, isOpen: false, dateObj: textDateToDate(task.date_of_expire) }));
+}
 
 const taskLength = computed(() => tasks.value.length);
 
 const title = ref('');
 
-function addTask() {
+async function addTask() {
     if (!title.value) return;
+
     const newTask = {
-        task_id: tasks.value.length + 1,
         title: title.value,
         description: '',
         state: 'Pending',
         date_of_expire: format(date.value, 'dd-MM-yyyy'),
         dateObj: textDateToDate(format(date.value, 'dd-MM-yyyy')),
     }
-    console.log(newTask);
-    tasks.value.push(newTask);
+    await useApi().addTask(user.getUserId(), newTask, tokenCookie.value);
+    tasks.value.push({...newTask, isOpen: false });
     title.value = '';
     date.value = new Date();
 }
@@ -121,6 +109,7 @@ function checkTasksExpiringSoon() {
 }
 
 onMounted(() => {
+    getTasks();
     checkTasksExpiringSoon();
 });
 
@@ -128,7 +117,7 @@ onMounted(() => {
 
 <template>
     <div class="flex justify-center items-center content-below-appbar">
-        <UCard class="w-screen mx-52 min-w-fit ring-0">
+        <UCard class="w-screen mx-52 min-w-96 ring-0">
             <h1 class="font-bold text-primary text-3xl mx-10 py-4 mb-4">Tareas</h1>
             <div class="flex items-center justify-between">
                 <UInput v-model="filter" class="mx-10 my-4" size="md" icon="i-heroicons-magnifying-glass" color="primary" placeholder="Buscar una tarea"/>

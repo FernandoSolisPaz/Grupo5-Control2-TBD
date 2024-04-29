@@ -1,9 +1,8 @@
 <script setup>
 import { z } from 'zod';
-const colorMode = useColorMode();
-const user = userStore();
 const tokenCookie = useCookie('token');
 const router = useRouter();
+const toast = useToast();
 
 if (tokenCookie.value) {
     router.push('/');
@@ -24,25 +23,11 @@ const state = reactive({
 async function handleSubmit (event) {
     const result = schema.safeParse(state);
     if (!result.success) {
-        const toast = useToast();
         toast.add({ title: 'Error en los datos ingresados', color: 'red' });
         return;
     }
-    const userObj = { name: state.name };
-    const body = JSON.stringify({
-        name: state.name,
-        password: state.password,
-            });
     try {
-        const response = await $fetch('http://localhost:8080/api/user/login', {
-            method: 'POST',
-            body: body,
-        });
-        const tokenCookie = useCookie('token');
-        tokenCookie.value = response;
-       
-        user.setUser(userObj);
-        const toast = useToast();
+        await useApi().login(state.name, state.password);
         toast.add({ title: 'Inicio de sesión exitoso', color: 'green' });
         router.push('/');
     } catch (error) {
@@ -59,8 +44,8 @@ async function handleSubmit (event) {
             }
         }
     }
+    router.push('/');
 }
-
 </script>
 
 <template>
