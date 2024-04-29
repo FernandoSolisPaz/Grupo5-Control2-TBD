@@ -46,7 +46,18 @@ export default function useApi($pinia : any) {
     
     // Task API
     // Create
-    
+    async function addTask(user_id : Number, task : any, token : String) {
+        try {
+            const response = await $fetch(`${url}/api/task`, { 
+                method: 'POST',
+                body: JSON.stringify({...task, user_id: user_id}),
+                params: { token : token }
+            });
+            return response;
+        } catch (error : any) {
+            return error;
+        }
+    }   
     // Read
     async function getTasksById(user_id : Number, token : String) {
         try {
@@ -70,7 +81,8 @@ export default function useApi($pinia : any) {
     return {
         login,
         getUser,
-        getTasksById
+        getTasksById,
+        addTask
     }
     
 }

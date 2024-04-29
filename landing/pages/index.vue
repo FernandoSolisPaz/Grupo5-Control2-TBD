@@ -30,7 +30,8 @@ const tasks = ref([]);
 
 async function getTasks() {
     const response = await useApi().getTasksById(user.getUserId(), tokenCookie.value);
-    tasks.value = response.map(task => ({ ...task, isOpen: false, dateObj: textDateToDate(task.date_of_expire) }));
+    if (response)
+        tasks.value = response.map(task => ({ ...task, isOpen: false, dateObj: textDateToDate(task.date_of_expire) }));
 }
 
 const taskLength = computed(() => tasks.value.length);
@@ -44,22 +45,39 @@ async function addTask() {
         title: title.value,
         description: '',
         state: 'Pending',
-        date_of_expire: format(date.value, 'dd-MM-yyyy'),
-        dateObj: textDateToDate(format(date.value, 'dd-MM-yyyy')),
+        date_of_expire: format(date.value, 'yyyy-MM-dd')
     }
-    await useApi().addTask(user.getUserId(), newTask, tokenCookie.value);
-    tasks.value.push({...newTask, isOpen: false });
-    title.value = '';
-    date.value = new Date();
-}
+    try {
+        const response = await useApi().addTask(user.getUserId(), newTask, tokenCookie.value);
+        tasks.value.push({
+            ...newTask,
+            isOpen: false,
+            dateObj: textDateToDate(response.date_of_expire)
+        });
+        const numberOfPages = Math.ceil(tasks.value.length / tasksPerPage.value);
+        title.value = '';
+        date.value = new Date();
+        toast.add({ title:'Tarea añadida', color:'green', icon:'i-heroicons-check-circle-16-solid', });
 
-function textDateToLabel(date) {
-    const newDate = new Date(date+'T00:00:00');
-    return format(newDate, 'd MMM, yyy');
+        if ((tasks.value.length - 1) % tasksPerPage.value === 0 && currentPage.value * tasksPerPage.value < tasks.value.length) {
+            currentPage.value++;
+        }
+    } catch (error) {
+        if (error.response){
+            if (error.response.status === 400) {
+                const toast = useToast();
+                toast.add({ title: 'Error en los datos ingresados', color: 'red' });
+            } else {
+                const toast = useToast();
+                toast.add({ title: 'Error en el servidor', color: 'red' });
+            }
+        }
+    }
 }
 
 function textDateToDate(date) {
-    return new Date(date+'T00:00:00');
+    const newDate = new Date(date+'T00:00:00');
+    return newDate;
 }
 
 function deleteTask(task) {
@@ -108,8 +126,8 @@ function checkTasksExpiringSoon() {
     }
 }
 
-onMounted(() => {
-    getTasks();
+onBeforeMount(async () => {
+    await getTasks();
     checkTasksExpiringSoon();
 });
 
@@ -173,7 +191,7 @@ onMounted(() => {
                 <p class="text-primary mx-10 py-2 font-medium">Intenta añadiendo una nueva tarea</p>
                 <UIcon name="i-heroicons-arrow-down" class="w-8 h-8 text-primary mt-2"/>
             </div>
-            <UPagination :total="filteredTaskCount" :per-page="filteredTaskCount" v-model="currentPage" class="my-4 mx-10 text-center"/>
+            <UPagination :total="filteredTaskCount" :pageCount="5" v-model="currentPage" class="my-4 mx-10 text-center"/>
             <div class="flex items-center mx-10 py-4 mt-4 justify-between">
 
                 <UInput v-model="title" size="xl" class="w-full" icon="i-heroicons-plus-circle" color="primary" placeholder="Agregar una tarea" :ui="{ icon: { trailing: { pointer: '' } } }">
