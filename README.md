@@ -80,9 +80,9 @@ git clone https://github.com/FernandoSolisPaz/Grupo5-Control2-TBD
 
 3. Abre el "Query Tool" haciendo clic con el botón derecho en la base de datos seleccionada y elige "Query Tool".
 
-4. Abre tu archivo SQL que contiene el script para cargar datos utilizando la opción "File" > "Open" en la ventana del "Query Tool".
+4. Abre tu archivo SQL que contiene el script para cargar datos utilizando la opción "File" > "Open" en la ventana del "Query Tool". (Seleccionar archivo dbCreate.sql y loadData.sql)
 
-5. Ejecuta el script SQL haciendo clic en el botón "Execute" o presionando la tecla `F5`.
+5. Ejecuta el script SQL haciendo clic en el botón "Execute" o presionando la tecla `F5`
 
 ### 4.3 Verificar la Carga de Datos
 
@@ -120,9 +120,12 @@ Asumiendo que ya tienes un proyecto de Vue.js en tu carpeta de frontend, sigue e
 
 2. Asegúrate de que todas las dependencias de tu proyecto estén instaladas.
 
-3. Inicia el proyecto backend, dirigiendote al *VoluunterApplication* y ejecutando la api mediante el botón verde (run) de arriba a la derecha.
+3. Adicionalmente dirigirse al apartado de configuracion de variables de entorno y agregar las siguientes variables. (USER=postgres;PORT=5432;database.password=1234)
+   Nota: Credenciales deben ser cambiadas a otras si su pc posee otras en PostGresql.
 
-4. Abre tu navegador web y accede a la URL proporcionada por el servidor de desarrollo (generalmente, [http://localhost:8080/](http://localhost:8080/)) para ver tu proyecto en funcionamiento.
+4. Inicia el proyecto backend, dirigiendote al *Application* y ejecutando la api mediante el botón verde (run) de arriba a la derecha.
+
+5. Abre tu navegador web y accede a la URL proporcionada por el servidor de desarrollo (generalmente, [http://localhost:8080/](http://localhost:8080/)) para ver tu proyecto en funcionamiento.
 
 ## 6. Accede a la aplicacion
 
