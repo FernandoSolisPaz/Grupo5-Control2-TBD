@@ -41,7 +41,6 @@ async function handleSubmit (event) {
                 email: state.email,
                 password: state.password,
             };
-    console.log(userObj);
 
 
     const body = JSON.stringify(userObj);

@@ -31,7 +31,7 @@ const tasks = ref([]);
 async function getTasks() {
     const response = await useApi().getTasksById(user.getUserId(), tokenCookie.value);
     if (response)
-        tasks.value = response.map(task => ({ ...task, isOpen: false, dateObj: textDateToDate(task.date_of_expire) }));
+        tasks.value = response.map(task => ({ ...task, editIsOpen: false, dateObj: textDateToDate(task.date_of_expire) }));
 }
 
 const taskLength = computed(() => tasks.value.length);
@@ -51,10 +51,11 @@ async function addTask() {
         const response = await useApi().addTask(user.getUserId(), newTask, tokenCookie.value);
         tasks.value.push({
             ...newTask,
-            isOpen: false,
-            dateObj: textDateToDate(response.date_of_expire)
+            editIsOpen: false,
+            dateObj: textDateToDate(response.date_of_expire),
+            task_id: response.task_id
+
         });
-        const numberOfPages = Math.ceil(tasks.value.length / tasksPerPage.value);
         title.value = '';
         date.value = new Date();
         toast.add({ title:'Tarea añadida', color:'green', icon:'i-heroicons-check-circle-16-solid', });
@@ -80,8 +81,24 @@ function textDateToDate(date) {
     return newDate;
 }
 
-function deleteTask(task) {
-    tasks.value = tasks.value.filter(t => t.task_id !== task.task_id);
+function formatDate(date) {
+    return format(date, 'd MMM, yyy');
+}
+
+async function deleteTask(task) {
+    try {
+        await useApi().deleteTask(task.task_id, tokenCookie.value);
+        toast.add({ title:'Tarea eliminada', color:'red', icon:'i-heroicons-trash-16-solid', });
+        tasks.value.pop(task);
+    } catch (error) {
+        if (error.response){
+            if (error.response.status === 400) {
+                toast.add({ title: 'Error en los datos ingresados', color: 'red' });
+            } else {
+                toast.add({ title: 'Error en el servidor', color: 'red' });
+            }
+        }
+    }
 }
 
 // Paginación y filtrado
@@ -126,6 +143,31 @@ function checkTasksExpiringSoon() {
     }
 }
 
+// Editar tarea
+async function editOnClose(task) {
+    try {
+        const editedTask = {
+            task_id: task.task_id,
+            user_id: user.getUserId(),
+            title: task.title,
+            description: task.description,
+            state: task.state,
+            date_of_expire: format(task.dateObj, 'yyyy-MM-dd')
+        }
+        const response = await useApi().updateTask(editedTask, tokenCookie.value);
+        task.editIsOpen = false;
+        toast.add({ title:'Tarea editada', color:'green', icon:'i-heroicons-check-circle-16-solid', });
+    } catch (error) {
+        if (error.response){
+            if (error.response.status === 400) {
+                toast.add({ title: 'Error en los datos ingresados', color: 'red' });
+            } else {
+                toast.add({ title: 'Error en el servidor', color: 'red' });
+            }
+        }
+    }
+}
+
 onBeforeMount(async () => {
     await getTasks();
     checkTasksExpiringSoon();
@@ -147,7 +189,7 @@ onBeforeMount(async () => {
             </div>
 
             <div v-if="taskLength > 0" v-for="task in filteredTasks" :key="task.task_id" class="flex px-10 items-center">
-                <UModal v-model="task.isOpen">
+                <UModal v-model="task.editIsOpen" @close="editOnClose(task)">
                     <UCard>
                         <UForm>
                             <UFormGroup name="title" size="xl" outline class="font-bold my-4 mx-4">
@@ -170,19 +212,22 @@ onBeforeMount(async () => {
                                     </UPopover>
                             </UFormGroup>
                         </UForm>
-
                     </UCard>
                 </UModal>
                 <UCard class="w-full my-2">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <UCheckbox :checked="task.state === 'Completed'" @change="toggleTaskState(task)" class="text-primary py-2"/>
-                            <p class="text-primary font-medium px-4 hover:text-blue-500 cursor-pointer" @click="task.isOpen = true">{{ task.title }}</p>
+                            <p class="text-primary font-medium px-4 hover:text-blue-500 cursor-pointer" @click="task.editIsOpen = true">{{ task.title }}</p>
                         </div>
                         <div class="flex items-center">
                             <p class="text-primary font-medium mr-2">{{ format(task.dateObj, 'd MMM, yyy') }}</p>
                             <UButton class="delete" variant="link" color="red" icon="i-heroicons-trash" @click="deleteTask(task)" />
                         </div>
+                    </div>
+                    <div>
+                        <p v-if="task.description.length <= 20 && task.description != ''" class="mx-8 opacity-50">{{ task.description }}</p>
+                        <p v-if="task.description.length > 20" class="mx-8 opacity-50">{{ task.description.slice(0, 20) + '...' }}</p>
                     </div>
                     </UCard>
             </div>

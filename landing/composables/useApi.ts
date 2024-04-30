@@ -78,11 +78,38 @@ export default function useApi($pinia : any) {
             }
         }
     }
+    // Update
+    async function updateTask(task : any, token : String) {
+        try {
+            const response = await $fetch(`${url}/api/task/${task.task_id}`, {
+                method: 'PUT',
+                body: JSON.stringify(task),
+                params: { token : token }
+            });
+            return response;
+        } catch (error : any) {
+            return error;
+        }
+    }
+    // Delete
+    async function deleteTask(task_id : Number, token : String) {
+        try {
+            const response = await $fetch(`${url}/api/task/${task_id}`, {
+                method: 'DELETE',
+                params: { token : token }
+            });
+            return response;
+        } catch (error : any) {
+            return error;
+        }
+    }
     return {
         login,
         getUser,
         getTasksById,
-        addTask
+        addTask,
+        updateTask,
+        deleteTask
     }
     
 }
