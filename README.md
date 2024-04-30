@@ -1,9 +1,9 @@
 # Control 2 - TBD
-## Este control fue desarrollado por el grupo n°5.
+## Este control fue desarrollado por el grupo N°5.
 ### Integrantes de grupo 5:
 * Jaime Riquelme
-* Fabian lizama
-* Cristobal Torres
+* Fabián lizama
+* Cristóbal Torres
 * Fernando Solís
 * Camilo Campos
 
@@ -12,29 +12,34 @@
 ## Base de datos
 * Postgres SQL versión 14
 * PgAdmin versión 4
-* Visual Studio Code
 
 ## Backend
-* IntelliJ IDEA Ultimate
+* Springboot 3.2.5
+* Gradle
+* IntelliJ IDEA Ultimate / Visual Studio Code
 * JDK versión 17
 * Postman
 
 ## Frontend
-* VUE versión 3
-* nuxt 3
+* Vue3
+* Nuxt3
+* Node.js 18^
+* Visual Studio Code
 
 # Guía de Instalación y Ejecución
-Esta guía te ayudará a configurar tu entorno de desarrollo para trabajar con IntelliJ IDEA, PostgreSQL, pgAdmin y ejecutar un proyecto de Vue.js en la carpeta de frontend.
+Para ejecutar el proyecto se deben seguir los siguientes pasos:
 
 ## 1. Clonar el repositorio
 
 git clone https://github.com/FernandoSolisPaz/Grupo5-Control2-TBD
 
-## 2. Instalación de IntelliJ IDEA
+## 2. Instalación de IntelliJ IDEA / Visual Studio Code
 
-1. Descarga IntelliJ IDEA desde el sitio web oficial: [Descargar IntelliJ IDEA](https://www.jetbrains.com/idea/download/).
+1. Descarga el IDE elegido:
+- [Descargar IntelliJ IDEA](https://www.jetbrains.com/idea/download/)
+- [Descargar VSCode](https://code.visualstudio.com/)
 
-2. Instala IntelliJ IDEA siguiendo las instrucciones específicas para tu sistema operativo.
+2. Instala el IDE siguiendo las instrucciones específicas para tu sistema operativo.
 
 ## 3. Instalación de PostgreSQL y pgAdmin
 
@@ -53,7 +58,6 @@ git clone https://github.com/FernandoSolisPaz/Grupo5-Control2-TBD
 ## 4. Crear base de datos y cargar información
 
 ### 4.1 Crear base de datos
-
 1. Asegúrate de estar conectado a PostgreSQL con pgAdmin:
    Abre pgAdmin y conéctate a tu servidor PostgreSQL.
    Si aún no tienes una conexión configurada, puedes hacerlo siguiendo las instrucciones de pgAdmin.
@@ -84,24 +88,27 @@ git clone https://github.com/FernandoSolisPaz/Grupo5-Control2-TBD
 
 5. Ejecuta el script SQL haciendo clic en el botón "Execute" o presionando la tecla `F5`
 
-### 4.3 Verificar la Carga de Datos
-
-Después de ejecutar el script, verifica que los datos se hayan cargado correctamente en las tablas correspondientes. Puedes hacerlo consultando las tablas o ejecutando consultas SELECT para verificar que los datos estén presentes.
-
-Asegúrate de que el script SQL esté formateado y escrito correctamente para evitar errores durante la carga de datos. Además, verifica que las tablas y columnas mencionadas en el script coincidan con la estructura de tu base de datos.
-
-¡Listo! Ahora estás preparado para cargar datos en tu base de datos PostgreSQL desde un script SQL.
-
 
 ## 5. Ejecución del proyecto
 
-### 5.1 Ejecución Frontend por vue
+### 5.1 Ejecución Backend
 
-Asumiendo que ya tienes un proyecto de Vue.js en tu carpeta de frontend, sigue estos pasos para ejecutarlo:
+1. Abre tu IDE preferido instalado anteriormente y abre la carpeta [api](./api).
 
-1. Abre una terminal en la carpeta de tu proyecto Vue.js.
+2. Asegúrate de que todas las dependencias de tu proyecto estén instaladas.
 
-2. Asegúrate de haber instalado Node.js y npm. Si no los tienes instalados, puedes descargarlos desde [https://nodejs.org/](https://nodejs.org/).
+3. Adicionalmente dirigirse al apartado de configuracion de variables de entorno y agregar las siguientes variables. (USER=postgres;PORT=5432;database.password=1234)
+   Nota: Credenciales deben ser cambiadas a otras si su pc posee otras en PostGresql.
+
+4. Inicia el proyecto backend, dirigiendote al *Application* y ejecutando la api mediante el botón verde (run) de arriba a la derecha.
+
+5. Abre tu navegador web y accede a la URL proporcionada por el servidor de desarrollo (generalmente, [http://localhost:8080/](http://localhost:8080/)) para ver tu proyecto en funcionamiento.
+
+### 5.2 Ejecución Frontend
+
+1. Abre una terminal en la carpeta [landing](./landing).
+
+2. Asegúrate de haber instalado Node.js 18 o superior. Si no los tienes instalados, puedes descargarlos desde [https://nodejs.org/](https://nodejs.org/).
 
 3. Instala las dependencias del proyecto ejecutando el siguiente comando:
 
@@ -114,18 +121,6 @@ Asumiendo que ya tienes un proyecto de Vue.js en tu carpeta de frontend, sigue e
    npm run dev
    ```
    
-### 5.2 Ejecución backend por springboot
-
-1. Abre IntelliJ IDEA y abre tu proyecto (backend) en tu carpeta api.
-
-2. Asegúrate de que todas las dependencias de tu proyecto estén instaladas.
-
-3. Adicionalmente dirigirse al apartado de configuracion de variables de entorno y agregar las siguientes variables. (USER=postgres;PORT=5432;database.password=1234)
-   Nota: Credenciales deben ser cambiadas a otras si su pc posee otras en PostGresql.
-
-4. Inicia el proyecto backend, dirigiendote al *Application* y ejecutando la api mediante el botón verde (run) de arriba a la derecha.
-
-5. Abre tu navegador web y accede a la URL proporcionada por el servidor de desarrollo (generalmente, [http://localhost:8080/](http://localhost:8080/)) para ver tu proyecto en funcionamiento.
 
 ## 6. Accede a la aplicacion
 
