@@ -34,7 +34,6 @@ public class TaskService implements TaskRepository {
     @Override
     public ResponseEntity<Object> createTask(TaskModel task, String token) {
         if (jwtMiddlewareService.validateToken(token)) {
-            System.out.println("Token valido");
             if (!verificationsService.validateInput(task.getTitle()) || !verificationsService.validateInput(task.getDescription()) || !verificationsService.validateInput(task.getState())) {
                 return ResponseEntity.badRequest().body("Error al crear la tarea, caracteres no permitidos en el título, descripción o estado.");
             }
@@ -58,7 +57,6 @@ public class TaskService implements TaskRepository {
     @Override
     public ResponseEntity<Object> getTask(int task_id, String token) {
         if (jwtMiddlewareService.validateToken(token)) {
-            System.out.println("Token valido");
             try (Connection connection = sql2o.open()) {
                 TaskModel task = connection.createQuery("SELECT * FROM \"task\" WHERE task_id = :task_id")
                         .addParameter("task_id", task_id)
