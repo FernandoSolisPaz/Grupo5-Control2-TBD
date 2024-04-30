@@ -26,6 +26,9 @@ if (!tokenCookie.value) {
     router.push('/login');
 }
 
+const humansCookie = useCookie('humans');
+humansCookie.value = undefined;
+
 const tasks = ref([]);
 
 async function getTasks() {
