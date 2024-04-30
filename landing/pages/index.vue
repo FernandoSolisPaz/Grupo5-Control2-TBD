@@ -38,43 +38,7 @@ const taskLength = computed(() => tasks.value.length);
 
 const title = ref('');
 
-async function addTask() {
-    if (!title.value) return;
 
-    const newTask = {
-        title: title.value,
-        description: '',
-        state: 'Pending',
-        date_of_expire: format(date.value, 'yyyy-MM-dd')
-    }
-    try {
-        const response = await useApi().addTask(user.getUserId(), newTask, tokenCookie.value);
-        tasks.value.push({
-            ...newTask,
-            editIsOpen: false,
-            dateObj: textDateToDate(response.date_of_expire),
-            task_id: response.task_id
-
-        });
-        title.value = '';
-        date.value = new Date();
-        toast.add({ title:'Tarea añadida', color:'green', icon:'i-heroicons-check-circle-16-solid', });
-
-        if ((tasks.value.length - 1) % tasksPerPage.value === 0 && currentPage.value * tasksPerPage.value < tasks.value.length) {
-            currentPage.value++;
-        }
-    } catch (error) {
-        if (error.response){
-            if (error.response.status === 400) {
-                const toast = useToast();
-                toast.add({ title: 'Error en los datos ingresados', color: 'red' });
-            } else {
-                const toast = useToast();
-                toast.add({ title: 'Error en el servidor', color: 'red' });
-            }
-        }
-    }
-}
 
 function textDateToDate(date) {
     const newDate = new Date(date+'T00:00:00');
@@ -85,21 +49,7 @@ function formatDate(date) {
     return format(date, 'd MMM, yyy');
 }
 
-async function deleteTask(task) {
-    try {
-        await useApi().deleteTask(task.task_id, tokenCookie.value);
-        toast.add({ title:'Tarea eliminada', color:'red', icon:'i-heroicons-trash-16-solid', });
-        tasks.value.pop(task);
-    } catch (error) {
-        if (error.response){
-            if (error.response.status === 400) {
-                toast.add({ title: 'Error en los datos ingresados', color: 'red' });
-            } else {
-                toast.add({ title: 'Error en el servidor', color: 'red' });
-            }
-        }
-    }
-}
+
 
 // Paginación y filtrado
 const currentPage = ref(1);
@@ -144,6 +94,45 @@ function checkTasksExpiringSoon() {
     }
 }
 
+// Añadir tarea
+async function addTask() {
+    if (!title.value) return;
+
+    const newTask = {
+        title: title.value,
+        description: '',
+        state: 'Pending',
+        date_of_expire: format(date.value, 'yyyy-MM-dd')
+    }
+    try {
+        const response = await useApi().addTask(user.getUserId(), newTask, tokenCookie.value);
+        tasks.value.push({
+            ...newTask,
+            editIsOpen: false,
+            dateObj: textDateToDate(response.date_of_expire),
+            task_id: response.task_id
+
+        });
+        title.value = '';
+        date.value = new Date();
+        toast.add({ title:'Tarea añadida', color:'green', icon:'i-heroicons-check-circle-16-solid', });
+
+        if ((tasks.value.length - 1) % tasksPerPage.value === 0 && currentPage.value * tasksPerPage.value < tasks.value.length) {
+            currentPage.value++;
+        }
+    } catch (error) {
+        if (error.response){
+            if (error.response.status === 400) {
+                const toast = useToast();
+                toast.add({ title: 'Error en los datos ingresados', color: 'red' });
+            } else {
+                const toast = useToast();
+                toast.add({ title: 'Error en el servidor', color: 'red' });
+            }
+        }
+    }
+}
+
 // Editar tarea
 async function editOnClose(task) {
     try {
@@ -158,6 +147,27 @@ async function editOnClose(task) {
         const response = await useApi().updateTask(editedTask, tokenCookie.value);
         task.editIsOpen = false;
         toast.add({ title:'Tarea editada', color:'green', icon:'i-heroicons-check-circle-16-solid', });
+    } catch (error) {
+        if (error.response){
+            if (error.response.status === 400) {
+                toast.add({ title: 'Error en los datos ingresados', color: 'red' });
+            } else {
+                toast.add({ title: 'Error en el servidor', color: 'red' });
+            }
+        }
+    }
+}
+
+// Eliminar tarea
+async function deleteTask(task) {
+    try {
+        await useApi().deleteTask(task.task_id, tokenCookie.value);
+        toast.add({ title:'Tarea eliminada', color:'red', icon:'i-heroicons-trash-16-solid', });
+        tasks.value.pop(task);
+        if (currentPage.value > 1 && !filteredTasks.value.length) {
+            currentPage.value--;
+        }
+
     } catch (error) {
         if (error.response){
             if (error.response.status === 400) {
