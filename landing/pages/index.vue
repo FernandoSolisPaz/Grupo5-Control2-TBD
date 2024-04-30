@@ -123,8 +123,9 @@ const filteredTaskCount = computed(() => {
   ).length;
 });
 
-function toggleTaskState(task) {
-    task.state = task.state === 'Completed' ? 'Pending' : 'Completed';
+function toggleTaskState(task, value) {
+    task.state = value ? 'Completed' : 'Pending';
+    editOnClose(task);
 }
 
 // Notificaciones
@@ -217,7 +218,7 @@ onBeforeMount(async () => {
                 <UCard class="w-full my-2">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <UCheckbox :checked="task.state === 'Completed'" @change="toggleTaskState(task)" class="text-primary py-2"/>
+                            <UCheckbox :modelValue="task.state === 'Completed'" @update:modelValue="value => toggleTaskState(task, value)" class="text-primary py-2"/>
                             <p class="text-primary font-medium px-4 hover:text-blue-500 cursor-pointer" @click="task.editIsOpen = true">{{ task.title }}</p>
                         </div>
                         <div class="flex items-center">
