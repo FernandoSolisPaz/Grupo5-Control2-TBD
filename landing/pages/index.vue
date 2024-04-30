@@ -58,14 +58,21 @@ const filter = ref('');
 const filterStatus = ref('All');
 
 const filteredTasks = computed(() => {
-  return tasks.value.filter(task => {
-    if (filterStatus.value === 'All') {
-      return task.title.toLowerCase().includes(filter.value.toLowerCase());
-    } else {
-      return task.title.toLowerCase().includes(filter.value.toLowerCase()) && task.state === filterStatus.value;
-    }
-  }).slice((currentPage.value - 1) * tasksPerPage.value, currentPage.value * tasksPerPage.value);
+  return tasks.value
+    .filter(task => {
+      const filterText = filter.value.toLowerCase();
+      const matchesTitle = task.title.toLowerCase().includes(filterText);
+      const matchesDescription = task.description.toLowerCase().includes(filterText);
+
+      if (filterStatus.value === 'All') {
+        return matchesTitle || matchesDescription;
+      } else {
+        return (matchesTitle || matchesDescription) && task.state === filterStatus.value;
+      }
+    })
+    .slice((currentPage.value - 1) * tasksPerPage.value, currentPage.value * tasksPerPage.value);
 });
+
 
 const filteredTaskCount = computed(() => {
   return tasks.value.filter(task =>
@@ -163,7 +170,8 @@ async function deleteTask(task) {
     try {
         await useApi().deleteTask(task.task_id, tokenCookie.value);
         toast.add({ title:'Tarea eliminada', color:'red', icon:'i-heroicons-trash-16-solid', });
-        tasks.value.pop(task);
+        // Elimina la tarea del arreglo de tareas
+        tasks.value = tasks.value.filter(t => t.task_id !== task.task_id);
         if (currentPage.value > 1 && !filteredTasks.value.length) {
             currentPage.value--;
         }
